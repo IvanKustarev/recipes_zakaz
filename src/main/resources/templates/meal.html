@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title th:text="${meal.name}" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
 </head>
@@ -41,8 +41,7 @@
                     Created by:
                     <a th:text="${recipe.author.username}" th:href="@{'/user/' + ${recipe.author.id}}"/>
                 </span>
-            <a class="btn btn-primary" th:href="@{'/recipes/' + ${recipe.id}}" style="margin: 10px">Читати повністю</a>
-            <!--                <a class="btn btn-primary" th:href="@{'/meals/create'}">Create a new meal</a>-->
+            <a class="btn btn-primary" th:href="@{'/recipes/' + ${recipe.id}}" style="margin: 10px">View the recipe</a>
         </div>
     </div>
     <a class="btn btn-primary" th:href="@{'/meals/' + ${meal.id} + '/recipe/create'}" style="margin: 20px">Add recipe</a>

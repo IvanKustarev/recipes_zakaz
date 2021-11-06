@@ -51,7 +51,6 @@ public class MealController {
         dishes.add(recipe);
         meal.setDishes(dishes);
         mealService.save(meal);
-        System.out.println("added meal " + mealService.findById(mealId));
         return "redirect:/meals/";
     }
 
@@ -66,15 +65,12 @@ public class MealController {
                            @RequestParam String name) {
         Meal meal = new Meal(name, user);
         mealService.createMeal(meal);
-//        return "meals";
         return "redirect:/meals/" + meal.getId();
     }
 
     @GetMapping("/{id}")
     public String findById(@PathVariable Long id, Model model) {
         Meal meal = mealService.findById(id);
-//        System.out.println(meal);
-        System.out.println(meal);
         model.addAttribute("meal", meal);
         return "meal";
     }
