@@ -4,9 +4,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "usr")
@@ -30,6 +28,24 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Set<Role> roles;
 
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "USERS_FAVORITE_RECIPES",
+        joinColumns = @JoinColumn(name = "USER_ID"),
+        inverseJoinColumns = @JoinColumn(name = "FAVORITE_RECIPE_ID")
+    )
+    private Set<Recipe> favoriteRecipes = new HashSet<>();
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "INGREDIENTS_IN_SOPPING_LIST",
+            joinColumns = @JoinColumn(name = "USER_ID"),
+            inverseJoinColumns = @JoinColumn(name = "INGREDIENT")
+    )
+    private Set<Ingredient> ingredientsToBuy = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Event> events;
+
+
     public User(Long id, String username, String password, boolean active) {
         this.id = id;
         this.username = username;
@@ -47,6 +63,18 @@ public class User implements UserDetails {
     }
 
     public User() {
+    }
+
+    public void addFavoriteRecipe(Recipe recipe){
+//        if(!this.favoriteRecipes.contains(recipe)) {
+            this.favoriteRecipes.add(recipe);
+//        }
+    }
+
+    public void addIngredientsToBuy(Ingredient ingredient){
+//        if(!this.favoriteRecipes.contains(recipe)) {
+        this.ingredientsToBuy.add(ingredient);
+//        }
     }
 
     public Long getId() {
@@ -129,4 +157,30 @@ public class User implements UserDetails {
     public void setMeals(List<Meal> meals) {
         this.meals = meals;
     }
+
+    public Set<Recipe> getFavoriteRecipes() {
+        return favoriteRecipes;
+    }
+
+    public void setFavoriteRecipes(Set<Recipe> favoriteRecipes) {
+        this.favoriteRecipes = favoriteRecipes;
+    }
+
+    public Set<Ingredient> getIngredientsToBuy() {
+        return ingredientsToBuy;
+    }
+
+    public void setIngredientsToBuy(Set<Ingredient> ingredientsToBuy) {
+        this.ingredientsToBuy = ingredientsToBuy;
+    }
+
+    public List<Event> getEvents() {
+        return events;
+    }
+
+    public void setEvents(List<Event> events) {
+        this.events = events;
+    }
+
+
 }

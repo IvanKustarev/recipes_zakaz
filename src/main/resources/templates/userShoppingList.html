@@ -49,31 +49,19 @@
         </div>
     </nav>
 
-
     <h1><span class="badge bg-info" th:text="${author.username}"/></h1>
     <div class="col">
         <h3><span class="badge bg-info">Recipes</span></h3>
         <div class="row">
-            <div th:each="recipe : ${author.recipes}" class="col">
+            <div th:each="ingredient : ${author.getIngredientsToBuy()}" class="col">
                 <div class="card">
-                    <div class="card">
-                        <h2><a th:text="${recipe.title}" th:href="@{'/recipe/' + ${recipe.id}}"/></h2>
-                    </div>
-                    <h3 th:text="${recipe.description}"/>
-                </div>
-                <br>
-            </div>
-        </div>
-    </div>
-
-    <div class="col">
-        <h3><span class="badge bg-info">Meals</span></h3>
-        <div class="row">
-            <div th:each="meal : ${author.meals}" class="col">
-                <div class="card">
-                    <div class="card">
-                        <h2><a th:text="${meal.name}" th:href="@{'/meals/' + ${meal.id}}"/></h2>
-                    </div>
+                    <h3 th:text="${ingredient.text}"/>
+<!--                    <div class="card">-->
+<!--                        <h2><a text="Delete" th:href="@{'/recipe/' + ${ingredient.id}}"/></h2>-->
+<!--                    </div>-->
+                    <form class="d-flex" method="post" th:action="@{'/user/' + ${author.id} + '/shoppingList/' + ${ingredient.id}}">
+                        <button class="btn btn-primary" type="submit">Delete</button>
+                    </form>
                 </div>
                 <br>
             </div>

@@ -1,8 +1,10 @@
 package com.example.recipes.model;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnJava;
-
 import javax.persistence.*;
+import java.lang.reflect.Array;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class Recipe {
@@ -18,8 +20,17 @@ public class Recipe {
     private User author;
 
     @ManyToOne(cascade = CascadeType.ALL)
-//    @JoinColumn(name = "meal_id")
     private Meal meal;
+
+    @ManyToMany(mappedBy = "favoriteRecipes")
+    private Set<User> usersFavoriteRecipe = new HashSet<>();
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "RECIPE_INGREDIENTS",
+            joinColumns = @JoinColumn(name = "RECIPE_ID"),
+            inverseJoinColumns = @JoinColumn(name = "INGREDIENT_ID")
+    )
+    private Set<Ingredient> ingredients = new HashSet<>();
 
     public Recipe(Long id, String title, String description, User author) {
         this.id = id;
@@ -43,9 +54,17 @@ public class Recipe {
         this.meal = meal;
     }
 
-    public Recipe() {}
+    public Recipe() {
+    }
 
     public Recipe(String title, String description, User author) {
+        this.title = title;
+        this.description = description;
+        this.author = author;
+    }
+
+    public Recipe(String title, String description, User author, String ingredient) {
+        this.ingredients.add(new Ingredient(ingredient));
         this.title = title;
         this.description = description;
         this.author = author;
@@ -102,6 +121,23 @@ public class Recipe {
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", author=" + author +
+                ", ingredients=" + ingredients +
                 '}';
+    }
+
+    public Ingredient[] getIngredients() {
+        return ingredients.toArray(new Ingredient[0]);
+    }
+
+    public void setIngredients(Set<Ingredient> ingredients) {
+        this.ingredients = ingredients;
+    }
+
+    public Set<User> getUsersFavoriteRecipe() {
+        return usersFavoriteRecipe;
+    }
+
+    public void setUsersFavoriteRecipe(Set<User> usersFavoriteRecipe) {
+        this.usersFavoriteRecipe = usersFavoriteRecipe;
     }
 }

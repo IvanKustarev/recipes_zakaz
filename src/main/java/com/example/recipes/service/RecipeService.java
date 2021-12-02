@@ -12,4 +12,8 @@ public interface RecipeService {
     List<Recipe> findAll();
 
     Recipe findRecipeById(Long id);
+
+    List<Recipe> findRecipesByDescription(String description);
+
+    void saveRecipe(Recipe recipe);
 }

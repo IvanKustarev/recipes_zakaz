@@ -40,4 +40,14 @@ public class RecipeServiceImpl implements RecipeService {
         return recipeRepository.findById(id).orElseThrow(() ->
                 new NoSuchRecipeException("No such recipe"));
     }
+
+    @Override
+    public List<Recipe> findRecipesByDescription(String description) {
+        return recipeRepository.findRecipesByDescriptionContaining(description);
+    }
+
+    @Override
+    public void saveRecipe(Recipe recipe) {
+        recipeRepository.save(recipe);
+    }
 }
