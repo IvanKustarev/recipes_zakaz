@@ -26,7 +26,7 @@ public class UserController {
     @GetMapping("{id}")
     public String findUserById(@PathVariable Long id, Model model) {
         User user = userService.findById(id);
-        model.addAttribute("author", user);
+            model.addAttribute("author", user);
         return "userProfile";
     }
 
@@ -54,6 +54,7 @@ public class UserController {
                 iterator.remove();
             }
         }
+        userService.saveUser(user);
 
         model.addAttribute("author", user);
         return "userShoppingList";

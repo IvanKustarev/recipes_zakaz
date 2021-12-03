@@ -31,14 +31,16 @@ public class MealController {
 
 
     @GetMapping("/create")
-    public String planMeal() {
+    public String planMeal(@AuthenticationPrincipal User user,Model model) {
+        model.addAttribute("author", user);
         return "createMeal";
     }
 
     @GetMapping
-    public String findAll(Model model) {
+    public String findAll(@AuthenticationPrincipal User user,Model model) {
         List<Meal> meals = mealService.findAll();
         model.addAttribute("meals", meals);
+        model.addAttribute("author", user);
         return "meals";
     }
 
@@ -55,8 +57,9 @@ public class MealController {
     }
 
     @GetMapping("/{mealId}/recipe/create")
-    public String saveRecipePage(@PathVariable Long mealId, Model model) {
+    public String saveRecipePage(@AuthenticationPrincipal User user,@PathVariable Long mealId, Model model) {
         model.addAttribute("mealId", mealId);
+        model.addAttribute("author", user);
         return "recipeToMeal";
     }
 
@@ -69,9 +72,10 @@ public class MealController {
     }
 
     @GetMapping("/{id}")
-    public String findById(@PathVariable Long id, Model model) {
+    public String findById(@AuthenticationPrincipal User user,@PathVariable Long id, Model model) {
         Meal meal = mealService.findById(id);
         model.addAttribute("meal", meal);
+        model.addAttribute("author", user);
         return "meal";
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Iterator;
 import java.util.List;
 
 @Controller
@@ -28,30 +29,57 @@ public class MainController {
     }
 
     @GetMapping
-    public String findAll(Model model) {
+    public String findAll(@AuthenticationPrincipal User user,Model model) {
 //        initDb();
         List<Recipe> allRecipes = recipeService.findAll();
         model.addAttribute("recipes", allRecipes);
+        model.addAttribute("author", user);
         return "recipes";
     }
 
     @GetMapping("/create")
-    public String createRecipe() {
+    public String createRecipe(@AuthenticationPrincipal User user,Model model) {
+        model.addAttribute("author", user);
         return "createRecipe";
     }
 
     @PostMapping("/create")
     public String saveRecipe(@AuthenticationPrincipal User user,
-                             @RequestParam String title, @RequestParam String description, @RequestParam String ingredients) {
+                             @RequestParam String title, @RequestParam String description, @RequestParam String ingredients, Model model) {
         Recipe recipe = new Recipe(title, description, user, ingredients);
         recipeService.createRecipe(recipe);
+        model.addAttribute("author", user);
         return "redirect:/";
     }
 
     @GetMapping("/recipe/{id}")
-    public String getRecipeById(@PathVariable Long id, Model model) {
+    public String getRecipeById(@AuthenticationPrincipal User user1,@PathVariable Long id, Model model) {
         Recipe recipe = recipeService.findRecipeById(id);
         model.addAttribute("recipe", recipe);
+        model.addAttribute("author", user1);
+        User user = userService.findByUsername(user1.getUsername());
+        String favoriteClass = "";
+        Iterator<Recipe> recipeIterator = user.getFavoriteRecipes().iterator();
+        while (recipeIterator.hasNext()){
+            if(recipeIterator.next().equals(recipe)){
+                favoriteClass = "btn btn-danger";
+            }
+        }
+        if(favoriteClass.equals("")){
+            favoriteClass = "btn btn-primary";
+        }
+        String addToSoppingListClass = "";
+        Iterator<Ingredient> ingredientIterator = user.getIngredientsToBuy().iterator();
+        while (ingredientIterator.hasNext()){
+            if(ingredientIterator.next().equals(recipe.getIngredients()[0])){
+                addToSoppingListClass = "btn btn-danger";
+            }
+        }
+        if(addToSoppingListClass.equals("")){
+            addToSoppingListClass = "btn btn-primary";
+        }
+        ButtonClass buttonClass = new ButtonClass(favoriteClass, addToSoppingListClass);
+        model.addAttribute("buttons", buttonClass);
         return "recipe";
     }
 
@@ -63,7 +91,8 @@ public class MainController {
         user.addFavoriteRecipe(recipe);
         userService.saveUser(user);
         model.addAttribute("recipe", recipe);
-        return "recipe";
+        model.addAttribute("author", user);
+        return "redirect:/recipe/" + id;
     }
 
     @GetMapping("/recipe/{id}/toShoppingList")
@@ -74,12 +103,13 @@ public class MainController {
         user.addIngredientsToBuy(recipe.getIngredients()[0]);
         userService.saveUser(user);
         model.addAttribute("recipe", recipe);
-        return "recipe";
+        model.addAttribute("author", user);
+        return "redirect:/recipe/" + id;
     }
 
 
     @PostMapping("/filter")
-    public String filter(@RequestParam String title, Model model) {
+    public String filter(@AuthenticationPrincipal User user,@RequestParam String title, Model model) {
         List<Recipe> recipes;
         if (title != null && !title.isEmpty()) {
             recipes = recipeService.findRecipesByTitle(title);
@@ -90,6 +120,36 @@ public class MainController {
             recipes = recipeService.findAll();
         }
         model.addAttribute("recipes", recipes);
+        model.addAttribute("author", user);
         return "recipes";
+    }
+
+    public class ButtonClass{
+        private String favorite;
+        private String addToShoppingList;
+
+        public ButtonClass() {
+        }
+
+        public ButtonClass(String favorite, String addToShoppingList) {
+            this.favorite = favorite;
+            this.addToShoppingList = addToShoppingList;
+        }
+
+        public String getFavorite() {
+            return favorite;
+        }
+
+        public void setFavorite(String favorite) {
+            this.favorite = favorite;
+        }
+
+        public String getAddToShoppingList() {
+            return addToShoppingList;
+        }
+
+        public void setAddToShoppingList(String addToShoppingList) {
+            this.addToShoppingList = addToShoppingList;
+        }
     }
 }

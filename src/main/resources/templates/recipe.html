@@ -23,6 +23,8 @@
       &nbsp
       <a href="/meals" class="btn btn-primary">All meals</a>
       &nbsp
+      <a th:href="@{'/user/' + ${author.id}}" class="btn btn-primary">Profile</a>
+      &nbsp
     </div>
     <form th:action="@{/logout}" method="post">
       <input type="submit" value="Sign out" class="btn btn-primary">
@@ -40,8 +42,8 @@
     <strong> <a th:text="${recipe.author.username}" th:href="@{'/user/' + ${recipe.author.id}}"></a></strong>
   </span>
 
-  <a class="btn btn-primary" th:href="@{'/recipe/' + ${recipe.id} + '/toShoppingList'}" style="margin: 10px">Add ingredients to shopping list</a>
-  <a class="btn btn-primary" th:href="@{'/recipe/' + ${recipe.id} + '/favorite'}" style="margin: 10px">Favorite</a>
+  <a th:class="${buttons.addToShoppingList}" th:href="@{'/recipe/' + ${recipe.id} + '/toShoppingList'}" style="margin: 10px">Add ingredients to shopping list</a>
+  <a th:class="${buttons.favorite}" th:href="@{'/recipe/' + ${recipe.id} + '/favorite'}" style="margin: 10px">Favorite</a>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
 </body>

@@ -26,6 +26,8 @@
                 &nbsp
                 <a href="/meals" class="btn btn-primary">All meals</a>
                 &nbsp
+                <a th:href="@{'/user/' + ${author.id}}" class="btn btn-primary">Profile</a>
+                &nbsp
             </div>
             <form th:action="@{/logout}" method="post">
                 <input type="submit" value="Sign out" class="btn btn-primary">
